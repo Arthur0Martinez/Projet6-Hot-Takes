@@ -6,7 +6,6 @@ const userRoutes = require('./routes/user');
 const app = express();
 const path = require('path');
 
-app.use(helmet());
 app.use(express.json());
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -18,6 +17,7 @@ app.use((req, res, next) => {
 app.use('/api/sauces', stuffRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use(helmet());
 
 module.exports = app;
 
