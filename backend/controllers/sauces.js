@@ -1,7 +1,10 @@
+//Contient la logique métier de l'application
 const Thing = require('../models/thing');
 const express = require('express');
 const fs = require('fs');
 
+//Logique métier POST
+//Permet de créer une sauce à partir du fichier 'thing' dans le dossier 'models'
 exports.createThing = (req, res, next) => {
 
   const sauce = JSON.parse(req.body.sauce);
@@ -26,22 +29,8 @@ exports.createThing = (req, res, next) => {
   .catch(error => { res.status(400).json( { error })})
 };
 
-exports.getOneThing = (req, res, next) => {
-  Thing.findOne({
-    _id: req.params.id
-  }).then(
-    (thing) => {
-      res.status(200).json(thing);
-    }
-  ).catch(
-    (error) => {
-      res.status(404).json({
-        error: error
-      });
-    }
-  );
-};
-
+//Logique métier PUT
+//Permet de modifier la sauce seulement si l'userId correspond, sinon il bloque la requète
 exports.modifyThing = (req, res, next) => {
   let sauce;
   const thingObject = req.file ? {
@@ -65,6 +54,8 @@ exports.modifyThing = (req, res, next) => {
       });
 };
 
+//Logique métier DELETE
+//Permet de supprimer la sauce seulement si l'userId correspond, sinon il bloque la requète
 exports.deleteThing = (req, res, next) => {
   Thing.findOne({ _id: req.params.id})
       .then(thing => {
@@ -84,6 +75,25 @@ exports.deleteThing = (req, res, next) => {
       });
 };
 
+//Logique métier GET
+//Récupère la sauce séléctionnée en récupérant son Id
+exports.getOneThing = (req, res, next) => {
+  Thing.findOne({_id: req.params.id})
+    .then(
+      (thing) => {
+        res.status(200).json(thing);
+      }
+    ).catch(
+      (error) => {
+        res.status(404).json({
+          error: error
+        });
+      }
+    );
+};
+
+//Logique métier GET
+//Récupère toutes les sauces qui ont pu etre crées
 exports.getAllStuff = (req, res, next) => {
   Thing.find().then(
     (things) => {
@@ -97,18 +107,21 @@ exports.getAllStuff = (req, res, next) => {
     }
   );
 };
+
+//Logique métier POST
+//Permet d'ajouter un like OU un dislike OU si l'un a déjà été mis de pouvoir enlever le like OU le dislike
 exports.statusOfLikesAndDislikes = (req, res, next) => {
 
   if (req.body.like === 1) {
     Thing.updateOne(
       {_id: req.params.id},
       {
-        $push: {usersLiked: req.body.userId,},
+        $addToSet: {usersLiked: req.body.userId,},
         $inc: {likes: +1},
       }
     )
     .then(() =>
-    res.status(200).send({message: "Like"})
+    res.status(200).send({message: "Like"}),
     )
     .catch((error) =>
       res.status(400).send({error})
@@ -119,7 +132,7 @@ exports.statusOfLikesAndDislikes = (req, res, next) => {
     Thing.updateOne(
       {_id: req.params.id},
       {
-        $push: {usersDisliked: req.body.userId},
+        $addToSet: {usersDisliked: req.body.userId},
         $inc: {dislikes: +1},
       }
     )
