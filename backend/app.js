@@ -6,6 +6,8 @@ const stuffRoutes = require('./routes/sauces');
 const userRoutes = require('./routes/user');
 const app = express();
 const path = require('path');
+require("dotenv").config();
+
 
 app.use(express.json());
 
@@ -32,7 +34,7 @@ app.use(helmet());
 module.exports = app;
 
 //Connection à MongoDB, base de données non SQL
-mongoose.connect('mongodb+srv://Luxit0s:arturodu74@cluster0.fe79e.mongodb.net/?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://' + process.env.MONGO_USERNAME + ':' + process.env.MONGO_PASSWORD + '@cluster0.fe79e.mongodb.net/?retryWrites=true&w=majority',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))

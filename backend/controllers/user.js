@@ -2,6 +2,7 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 //Va permettre d'appeler une fonction de hashage
 const bcrypt = require('bcrypt');
+require("dotenv").config();
 
 //Fonction qui permet d'enregister un nouveau utilisateur
 exports.signup = (req, res, next) => {
@@ -44,7 +45,7 @@ exports.signup = (req, res, next) => {
                       //Attribution d'un token secret qui expire au bout de 24h
                       token: jwt.sign(
                           { userId: user._id },
-                          'kANBoWabMRL6zKR$lKwB=n1dK6pt&wZYki&TqrZD3WONwlMnhE@@O^0zEETt%gqfk3ssHW',
+                          process.env.TOKEN,
                           { expiresIn: '24h' }
                       )
                   });
